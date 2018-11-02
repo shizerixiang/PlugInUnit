@@ -1,13 +1,11 @@
 package com.beviswang.pluginunit
 
 import android.content.Context
-import android.content.pm.PackageManager
-import android.content.res.AssetManager
-import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import com.beviswang.pluginunit.util.PluginHelper
 import dalvik.system.DexClassLoader
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -30,54 +28,9 @@ class MainActivity : AppCompatActivity() {
         mPluginClassLoader = DexClassLoader(dexPath, optDir, null, classLoader)
 
         btn1.setOnClickListener {
-            img.setImageDrawable(getPluginImg(getUninstallAPKPackageName(
+            img.setImageDrawable(getPluginImg(PluginHelper.getUninstallAPKPackageName(
                     this@MainActivity, dexPath) + ".R\$drawable", "cover"))
         }
-    }
-
-    /**
-     * 获取未安装组件包名信息
-     * @param context 上下文
-     * @param pluginAPKPath 组件 APK 路径
-     * @return 组件包名信息
-     */
-    private fun getUninstallAPKPackageName(context: Context, pluginAPKPath: String): String {
-        val pm = context.packageManager
-        val packageInfo = pm.getPackageArchiveInfo(pluginAPKPath, PackageManager.GET_ACTIVITIES)
-                ?: return ""
-        val appInfo = packageInfo.applicationInfo
-        return appInfo.packageName
-    }
-
-    /**
-     * 创建 AssetManager
-     * @param pluginAPKPath 插件 APK 路径
-     * @return AssetManager?
-     */
-    private fun createAssetManager(pluginAPKPath: String): AssetManager? {
-        try {
-            val assetManager = AssetManager::class.java.newInstance()
-            val assetManagerClazz = Class.forName("android.content.res.AssetManager")
-            val addAssetPathMethod = assetManagerClazz.getDeclaredMethod("addAssetPath", String::class.java)
-            addAssetPathMethod.isAccessible = true
-            addAssetPathMethod.invoke(assetManager, pluginAPKPath)
-            return assetManager
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return null
-    }
-
-    /**
-     * 创建插件 Res 资源文件
-     * @param context 上下文
-     * @param pluginAPKPath 组件 APK 路径
-     * @return Resources
-     */
-    private fun createResources(context: Context, pluginAPKPath: String): Resources {
-        val assetManager = createAssetManager(pluginAPKPath)
-        val superRes = context.resources
-        return Resources(assetManager, superRes.displayMetrics, superRes.configuration)
     }
 
     /**
@@ -93,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             val field = loadClazz.getDeclaredField(resName)
             field.isAccessible = true
             val resId = field.get(R.id::class.java) as Int
-            val res = createResources(this@MainActivity,
+            val res = PluginHelper.createResources(this@MainActivity,
                     getFileStreamPath("appplugin-debug.apk").absolutePath)
             return res.getDrawable(resId, null)
         } catch (e: Exception) {
