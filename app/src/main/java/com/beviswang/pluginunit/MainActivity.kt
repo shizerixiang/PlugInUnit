@@ -1,10 +1,14 @@
 package com.beviswang.pluginunit
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
+import com.beviswang.pluginlib.IRepairPlugin
 import com.beviswang.pluginunit.util.PluginHelper
 import dalvik.system.DexClassLoader
 import kotlinx.android.synthetic.main.activity_main.*
@@ -31,6 +35,24 @@ class MainActivity : AppCompatActivity() {
             img.setImageDrawable(getPluginImg(PluginHelper.getUninstallAPKPackageName(
                     this@MainActivity, dexPath) + ".R\$drawable", "cover"))
         }
+
+        btn2.setOnClickListener {
+//            startActivity(Intent(this@MainActivity, ProxyActivity::class.java))
+            showToast()
+        }
+    }
+
+    private fun showToast() {
+        val readerClass = mPluginClassLoader?.loadClass("com.beviswang.appplugin.RepairPlugin")
+                ?: throw Exception("Null ClassLoader!")
+        val repairPlugin: IRepairPlugin = readerClass.newInstance() as IRepairPlugin
+        repairPlugin.setOnStartActivity({ intent -> startPluginActivity(intent) }, this@MainActivity)
+        Toast.makeText(this@MainActivity, repairPlugin.getPluginInstallMessage(), Toast.LENGTH_LONG).show()
+    }
+
+    private fun startPluginActivity(intent: Intent) {
+        intent.component = ComponentName(this@MainActivity, ProxyActivity::class.java)
+        startActivity(intent)
     }
 
     /**
