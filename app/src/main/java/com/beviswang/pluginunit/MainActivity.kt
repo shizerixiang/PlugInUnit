@@ -9,18 +9,20 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import com.beviswang.pluginlib.IRepairPlugin
-import com.beviswang.pluginunit.util.PluginHelper
+import com.beviswang.pluginlib.util.PluginHelper
 import dalvik.system.DexClassLoader
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.startActivity
 
 class MainActivity : AppCompatActivity() {
 
     private var mPluginClassLoader: ClassLoader? = null
+    private var dexPath:String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val dexPath = getFileStreamPath("appplugin-debug.apk").absolutePath
+        dexPath = getFileStreamPath("appplugin-debug.apk").absolutePath
         Log.e("1", "dexPath=$dexPath")
         val optDir = getDir("dex", Context.MODE_PRIVATE).absolutePath
         Log.e("1", "optDir=$optDir")
@@ -37,15 +39,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         btn2.setOnClickListener {
-//            startActivity(Intent(this@MainActivity, ProxyActivity::class.java))
+            //            startActivity(Intent(this@MainActivity, ProxyActivity::class.java))
             showToast()
+            startActivity<RealActivity>()
         }
     }
 
     private fun showToast() {
         val readerClass = mPluginClassLoader?.loadClass("com.beviswang.appplugin.RepairPlugin")
-                ?: throw Exception("Null ClassLoader!")
+                ?: return
         val repairPlugin: IRepairPlugin = readerClass.newInstance() as IRepairPlugin
+        repairPlugin.loadResources(this@MainActivity,mPluginClassLoader!!,dexPath)
         repairPlugin.setOnStartActivity({ intent -> startPluginActivity(intent) }, this@MainActivity)
         Toast.makeText(this@MainActivity, repairPlugin.getPluginInstallMessage(), Toast.LENGTH_LONG).show()
     }

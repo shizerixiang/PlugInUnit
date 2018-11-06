@@ -7,6 +7,7 @@ class PluginApplication:Application() {
     override fun onCreate() {
         super.onCreate()
         val hook = HookOpt(ProxyActivity::class.java,this)
+        hook.hookSystemHandler()
         hook.hookAms()
     }
 }
