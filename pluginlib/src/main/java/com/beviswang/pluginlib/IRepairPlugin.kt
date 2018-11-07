@@ -2,6 +2,7 @@ package com.beviswang.pluginlib
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 
 /**
  * 插件入口接口
@@ -13,11 +14,9 @@ interface IRepairPlugin {
 
     /**
      * 插件资源加载
-     * @param context 主程序上下文
-     * @param classLoader 主程序加载器
-     * @param apkPath 当前插件存放位置
+     * @param res 该插件的资源文件
      */
-    fun loadResources(context: Context, classLoader: ClassLoader, apkPath: String)
+    fun loadResources(res: Resources)
 
     /**
      * 在主程序中设置 Activity 启动回调

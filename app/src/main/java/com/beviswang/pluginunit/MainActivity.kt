@@ -1,13 +1,11 @@
 package com.beviswang.pluginunit
 
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import com.beviswang.pluginlib.IRepairPlugin
 import com.beviswang.pluginlib.util.PluginHelper
 import dalvik.system.DexClassLoader
@@ -39,8 +37,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btn2.setOnClickListener {
-            //            startActivity(Intent(this@MainActivity, ProxyActivity::class.java))
-            showToast()
+//            showToast()
             startActivity<RealActivity>()
         }
     }
@@ -49,20 +46,22 @@ class MainActivity : AppCompatActivity() {
         val readerClass = mPluginClassLoader?.loadClass("com.beviswang.appplugin.RepairPlugin")
                 ?: return
         val repairPlugin: IRepairPlugin = readerClass.newInstance() as IRepairPlugin
-        repairPlugin.loadResources(this@MainActivity,mPluginClassLoader!!,dexPath)
+        repairPlugin.loadResources(PluginHelper.createResources(this@MainActivity,
+                getFileStreamPath("appplugin-debug.apk").absolutePath))
         repairPlugin.setOnStartActivity({ intent -> startPluginActivity(intent) }, this@MainActivity)
-        Toast.makeText(this@MainActivity, repairPlugin.getPluginInstallMessage(), Toast.LENGTH_LONG).show()
+//        Toast.makeText(this@MainActivity, repairPlugin.getPluginInstallMessage(), Toast.LENGTH_LONG).show()
     }
 
     private fun startPluginActivity(intent: Intent) {
-        intent.component = ComponentName(this@MainActivity, ProxyActivity::class.java)
+        mPluginClassLoader?.loadClass(intent.component.className) ?: return
+//        toast(intent.component.className)
         startActivity(intent)
     }
 
     /**
      * 获取组件的资源图片
      * @param resDirName 资源文件的包名 + .R$ + 资源文件夹名
-     * @param resName 资源文件名，不需要后缀
+     * @param resName 资源文件名，不需要文件名后缀
      * @return Drawable?
      */
     private fun getPluginImg(resDirName: String, resName: String): Drawable? {
