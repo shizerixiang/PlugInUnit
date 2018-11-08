@@ -1,6 +1,7 @@
 package com.beviswang.pluginunit
 
 import android.app.Application
+import com.beviswang.pluginunit.activity.ProxyActivity
 import com.beviswang.pluginunit.opt.HookOpt
 
 class PluginApplication:Application() {
