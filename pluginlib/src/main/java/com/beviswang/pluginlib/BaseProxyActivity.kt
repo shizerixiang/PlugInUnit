@@ -1,8 +1,8 @@
 package com.beviswang.pluginlib
 
-import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 
 abstract class BaseProxyActivity : AppCompatActivity() {
     private lateinit var mProxyManager: IProxyManager
@@ -10,9 +10,9 @@ abstract class BaseProxyActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mClassLoader = loadClassLoader()
         loadProxyManager()
         mProxyManager.onProxyCreated(savedInstanceState)
-        mClassLoader = loadClassLoader()
     }
 
     /** 加载 proxyManager */
@@ -25,10 +25,7 @@ abstract class BaseProxyActivity : AppCompatActivity() {
      * 启动指定插件中的 Activity
      * @param className class 路径
      */
-    fun startPluginActivity(className: String) {
-        startActivity(Intent(this@BaseProxyActivity,
-                classLoader.loadClass(packageName)).putExtra(EXTRA_CLASS_NAME, className))
-    }
+    abstract fun startPluginActivity(className: String)
 
     /** 加载代理 Activity 管理类 */
     fun loadProxyManagerActivity(className: String) {
@@ -75,9 +72,5 @@ abstract class BaseProxyActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         mProxyManager.onProxyDestroy()
-    }
-
-    companion object {
-        const val EXTRA_CLASS_NAME = "com.beviswang.pluginlib.BaseProxyActivity.ClassName.start"
     }
 }

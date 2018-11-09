@@ -22,5 +22,8 @@ class MainProxyManager : IProxyManager {
         mProxyActivity.mImg.setOnClickListener {
             Toast.makeText(mProxyActivity, "被点击了！", Toast.LENGTH_LONG).show()
         }
+        mProxyActivity.mTxt.setOnClickListener {
+            mProxyActivity.startPluginActivity("com.beviswang.appplugin.proxy.NextProxyManager")
+        }
     }
 }

@@ -1,18 +1,27 @@
 package com.beviswang.appplugin
 
-import android.content.res.Resources
+import android.content.Intent
 import com.beviswang.appplugin.proxy.MainProxyManager
 import com.beviswang.pluginlib.BaseProxyActivity
-import com.beviswang.pluginlib.IProxyManager
 
 class TestProxyActivity : BaseProxyActivity() {
-    override fun createResources(): Resources {
-        return pResources
+    override fun startPluginActivity(className: String) {
+        START_PROXY_MANAGER_NAME = className
+        startActivity(Intent(this@TestProxyActivity,
+                classLoader.loadClass(javaClass.name)))
     }
 
-    override fun loadProxyManager(): IProxyManager {
-        val main = MainProxyManager()
-        main.setProxyActivity(this)
-        return main
+    override fun loadClassLoader(): ClassLoader {
+        return classLoader
+    }
+
+    override fun loadProxyManager() {
+        loadProxyManagerActivity(if (START_PROXY_MANAGER_NAME.isEmpty())
+            MainProxyManager::javaClass.name else START_PROXY_MANAGER_NAME)
+        reset()
+    }
+
+    private fun reset(){
+        START_PROXY_MANAGER_NAME = ""
     }
 }

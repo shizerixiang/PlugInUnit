@@ -7,6 +7,8 @@ import com.beviswang.pluginlib.util.PluginHelper
 
 var PLUGIN_APK_PATH: String = ""
 
+var START_PROXY_MANAGER_NAME:String = ""
+
 lateinit var mPluginClassLoader: ClassLoader
 
 lateinit var mResources: Resources

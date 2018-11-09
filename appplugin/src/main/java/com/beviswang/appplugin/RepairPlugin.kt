@@ -17,6 +17,8 @@ class RepairPlugin : IRepairPlugin {
     }
 }
 
+var START_PROXY_MANAGER_NAME:String = ""
+
 // 重新加载的资源
 lateinit var pResources: Resources
 
