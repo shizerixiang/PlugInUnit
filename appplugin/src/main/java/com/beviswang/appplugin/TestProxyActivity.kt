@@ -5,13 +5,8 @@ import com.beviswang.appplugin.proxy.MainProxyManager
 import com.beviswang.pluginlib.BaseProxyActivity
 
 class TestProxyActivity : BaseProxyActivity() {
-    override fun startPluginActivity(className: String) {
-        START_PROXY_MANAGER_NAME = className
-        startActivity(Intent(this@TestProxyActivity,
-                classLoader.loadClass(javaClass.name)))
-    }
-
     override fun loadClassLoader(): ClassLoader {
+        pResources = resources
         return classLoader
     }
 
@@ -19,6 +14,12 @@ class TestProxyActivity : BaseProxyActivity() {
         loadProxyManagerActivity(if (START_PROXY_MANAGER_NAME.isEmpty())
             MainProxyManager::javaClass.name else START_PROXY_MANAGER_NAME)
         reset()
+    }
+
+    override fun startPluginActivity(className: String) {
+        START_PROXY_MANAGER_NAME = className
+        startActivity(Intent(this@TestProxyActivity,
+                classLoader.loadClass(javaClass.name)))
     }
 
     private fun reset(){
