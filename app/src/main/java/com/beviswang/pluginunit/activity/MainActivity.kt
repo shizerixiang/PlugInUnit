@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import com.beviswang.pluginlib.util.PluginHelper
 import com.beviswang.pluginunit.PLUGIN_APK_PATH
 import com.beviswang.pluginunit.mResources
@@ -13,7 +12,9 @@ import com.beviswang.pluginunit.loadResources
 import com.beviswang.pluginunit.mPluginClassLoader
 import dalvik.system.DexClassLoader
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,16 +22,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         PLUGIN_APK_PATH = getFileStreamPath("appplugin-debug.apk").absolutePath
-        Log.e("1", "dexPath=$PLUGIN_APK_PATH")
-        val optDir = getDir("dex", Context.MODE_PRIVATE).absolutePath
-        Log.e("1", "optDir=$optDir")
-
-        // 第一个参数：是dex压缩文件的路径
-        // 第二个参数：是dex解压缩后存放的目录
-        // 第三个参数：是C/C++依赖的本地库文件目录,可以为null
-        // 第四个参数：是上一级的类加载器
-        mPluginClassLoader = DexClassLoader(PLUGIN_APK_PATH, optDir, null, classLoader)
-        loadResources()
+        loadDex()
 
         btn1.setOnClickListener {
             img.setImageDrawable(getPluginImg(PluginHelper.getUninstallAPKPackageName(
@@ -40,6 +32,11 @@ class MainActivity : AppCompatActivity() {
         btn2.setOnClickListener {
             startPluginActivity()
         }
+
+        img.setOnClickListener {
+            toast("重新加载 ClassLoader！")
+            loadDex()
+        }
     }
 
     private fun startPluginActivity() {
@@ -48,6 +45,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun startUnregisterActivity() {
         startActivity<RealActivity>()
+    }
+
+    private fun loadDex() {
+        doAsync {
+            val optDir = getDir("dex", Context.MODE_PRIVATE).absolutePath
+            // 第一个参数：是dex压缩文件的路径
+            // 第二个参数：是dex解压缩后存放的目录
+            // 第三个参数：是C/C++依赖的本地库文件目录,可以为null
+            // 第四个参数：是上一级的类加载器
+            mPluginClassLoader = DexClassLoader(PLUGIN_APK_PATH, optDir, null, classLoader)
+            loadResources()
+        }
     }
 
     /**

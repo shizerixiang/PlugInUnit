@@ -20,7 +20,7 @@ class MainProxyManager : IProxyManager {
         mProxyActivity.setContentView(getResourcesView(R.layout.activity_main_proxy, mProxyActivity))
         mProxyActivity.mImg.setImageDrawable(pResources.getDrawable(R.drawable.cover, null))
         mProxyActivity.mImg.setOnClickListener {
-            Toast.makeText(mProxyActivity, "被点击了！", Toast.LENGTH_LONG).show()
+            Toast.makeText(mProxyActivity, "馬鹿、あたしに触るな！", Toast.LENGTH_LONG).show()
         }
         mProxyActivity.mTxt.setOnClickListener {
             mProxyActivity.startPluginActivity("com.beviswang.appplugin.proxy.NextProxyManager")

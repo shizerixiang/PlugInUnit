@@ -18,7 +18,7 @@ class NextProxyManager : IProxyManager {
     override fun onProxyCreated(savedInstanceState: Bundle?) {
         mProxyActivity.setContentView(getResourcesView(R.layout.activity_next_proxy, mProxyActivity))
         mProxyActivity.mTxt.setOnClickListener {
-            Toast.makeText(mProxyActivity, "你碰到了我哦！变态！！！", Toast.LENGTH_LONG).show()
+            Toast.makeText(mProxyActivity, "你碰到了我哦！変態！！！", Toast.LENGTH_LONG).show()
         }
     }
 }
